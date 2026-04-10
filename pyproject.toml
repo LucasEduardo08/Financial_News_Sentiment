@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "financialnewssentiment"
-version = "0.1.0"
+version = "0.2.0"
 description = "Project to service a model to classifier sentiment in financial texts of the stock market"
 authors = ["Lucas <lucaseduardopereirateles@gmail.com>"]
 readme = "README.md"
@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.12"
 fastapi = "^0.135.3"
 pytest = "^9.0.2"
+datasets = "^4.8.4"
 
 
 [tool.poetry.group.dev.dependencies]
