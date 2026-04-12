@@ -19,9 +19,9 @@ def stockemotions_download():
     dataset_stockemotions_test = pd.read_csv(PATH_TEST, sep=',')
 
     # Saved datasets
-    dataset_stockemotions_train.to_csv("data/train_stockemotions.csv", index=False)
-    dataset_stockemotions_val.to_csv("data/val_stockemotions.csv", index=False)
-    dataset_stockemotions_test.to_csv("data/test_stockemotions.csv", index=False)
+    dataset_stockemotions_train.to_csv("data/raw/train_stockemotions.csv", index=False)
+    dataset_stockemotions_val.to_csv("data/raw/val_stockemotions.csv", index=False)
+    dataset_stockemotions_test.to_csv("data/raw/test_stockemotions.csv", index=False)
 
 
 def tfn_download():
@@ -29,8 +29,8 @@ def tfn_download():
     dataset_tfn_val = pd.read_csv(PATH_TFN + SPLITS['validation'])
 
     # Save datasets
-    dataset_tfn_train.to_csv("data/train_tfn.csv", index=False)
-    dataset_tfn_val.to_csv("data/val_tfn.csv", index=False)
+    dataset_tfn_train.to_csv("data/raw/train_tfn.csv", index=False)
+    dataset_tfn_val.to_csv("data/raw/val_tfn.csv", index=False)
 
 
 def main():
@@ -39,5 +39,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-# Fazer commit e continuar com o desenvolvimento do código de pré-processamento dos dados, criação do modelo e treinamento.
