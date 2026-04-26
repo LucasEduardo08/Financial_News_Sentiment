@@ -1,0 +1,67 @@
+stages:
+  download_data:
+    cmd: python3 -m src.data_download.download_data
+    deps:
+      - src/data_download/download_data.py
+    outs: 
+    - data/raw/test_stockemotions.csv
+    - data/raw/train_stockemotions.csv
+    - data/raw/val_stockemotions.csv
+    - data/raw/train_tfn.csv
+    - data/raw/val_tfn.csv
+
+  preprocess_data:
+    cmd: python3 -m src.data_preprocessing.preprocess_data
+    deps:
+      - src/data_preprocessing/preprocess_data.py
+      - data/raw/test_stockemotions.csv
+      - data/raw/train_stockemotions.csv
+      - data/raw/val_stockemotions.csv
+      - data/raw/train_tfn.csv
+      - data/raw/val_tfn.csv
+    outs:
+      - data/preprocessed/X_test.joblib
+      - data/preprocessed/X_train.joblib
+      - data/preprocessed/X_val.joblib
+      - data/preprocessed/y_test.joblib
+      - data/preprocessed/y_train.joblib
+      - data/preprocessed/y_val.joblib
+    params:
+      - preprocess_data.test_size
+      - preprocess_data.random_seed
+      - preprocess_data.n_components
+
+  train:
+    cmd: python3 -m src.model_training.train_model
+    deps:
+      - src/model_training/train_model.py
+      - data/preprocessed/X_test.joblib
+      - data/preprocessed/X_train.joblib
+      - data/preprocessed/X_val.joblib
+      - data/preprocessed/y_test.joblib
+      - data/preprocessed/y_train.joblib
+      - data/preprocessed/y_val.joblib
+    outs:
+      - artifacts/models/trained_model.keras
+    params:
+      - train.learning_rate
+      - train.hidden_layer_1_neurons
+      - train.hidden_layer_2_neurons
+      - train.dropout_rate
+      - train.epochs
+      - train.batch_size
+      - train.random_seed
+
+  evaluate:
+    cmd: python3 -m src.model_evaluation.evaluate_model
+    deps:
+      - src/model_evaluation/evaluate_model.py
+      - artifacts/models/trained_model.keras
+      - data/preprocessed/X_test.joblib
+      - data/preprocessed/X_train.joblib
+      - data/preprocessed/X_val.joblib
+      - data/preprocessed/y_test.joblib
+      - data/preprocessed/y_train.joblib
+      - data/preprocessed/y_val.joblib
+    metrics:
+      - artifacts/metrics/evaluation_results.json

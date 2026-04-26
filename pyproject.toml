@@ -17,6 +17,7 @@ scipy = "^1.17.1"
 keras = "^3.14.0"
 tensorflow = "^2.21.0"
 numpy = "^2.4.4"
+dvc = "^3.67.1"
 
 
 [tool.poetry.group.dev.dependencies]

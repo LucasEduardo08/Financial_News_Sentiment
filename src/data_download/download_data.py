@@ -1,3 +1,4 @@
+import logging
 import kagglehub
 import pandas as pd
 from datasets import load_dataset
@@ -13,6 +14,9 @@ SPLITS = {'train': 'sent_train.csv', 'validation': 'sent_valid.csv'}
 PATH_TFN = "hf://datasets/zeroshot/twitter-financial-news-sentiment/"
 
 
+logger = logging.getLogger("src.data_download.download_data")
+
+
 def stockemotions_download():
     dataset_stockemotions_train = pd.read_csv(PATH_TRAIN, sep=',')
     dataset_stockemotions_val = pd.read_csv(PATH_VAL, sep=',')
@@ -23,6 +27,8 @@ def stockemotions_download():
     dataset_stockemotions_val.to_csv("data/raw/val_stockemotions.csv", index=False)
     dataset_stockemotions_test.to_csv("data/raw/test_stockemotions.csv", index=False)
 
+    logger.info("StockEmotions dataset downloaded and saved.")
+
 
 def tfn_download():
     dataset_tfn_train = pd.read_csv(PATH_TFN + SPLITS['train'])
@@ -31,6 +37,9 @@ def tfn_download():
     # Save datasets
     dataset_tfn_train.to_csv("data/raw/train_tfn.csv", index=False)
     dataset_tfn_val.to_csv("data/raw/val_tfn.csv", index=False)
+    
+    logger.info("TFN dataset downloaded and saved.")
+
 
 
 def main():

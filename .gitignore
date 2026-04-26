@@ -220,6 +220,7 @@ src/data_loading/__pycache__/
 src/data_preprocessing/__pycache__/
 src/model_training/__pycache__/
 src/model_evaluation/__pycache__/
-models/trained_model.keras
-metrics/evaluation_results.json
+artifacts/models/trained_model.keras
+artifacts/metrics/evaluation_results.json
+artifacts/predictions/
 tests/__pycache__/

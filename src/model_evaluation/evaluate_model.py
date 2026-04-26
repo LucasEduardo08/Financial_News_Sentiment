@@ -21,7 +21,7 @@ def load_model() -> keras.Model:
         keras.Model: The loaded Keras model.
     """
     logger.info("Loading the trained model...")
-    model = tf.keras.models.load_model("models/trained_model.keras")
+    model = tf.keras.models.load_model("artifacts/models/trained_model.keras")
     return model
 
 
@@ -82,7 +82,7 @@ def save_evaluation_results(classification_report: str, confusion_matrix: pd.Dat
         "classification_report": classification_report,
         "confusion_matrix": confusion_matrix.to_dict(),
     }
-    with open("metrics/evaluation_results.json", "w") as f:
+    with open("artifacts/metrics/evaluation_results.json", "w") as f:
         json.dump(results, f, indent=4)
 
 

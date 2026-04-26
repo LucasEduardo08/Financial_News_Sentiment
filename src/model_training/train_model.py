@@ -101,7 +101,7 @@ def save_model(model: any) -> None:
         model (any): The trained Keras model to be saved.
     """
     logger.info("Saving the model...")
-    model.save("models/trained_model.keras")
+    model.save("artifacts/models/trained_model.keras")
 
 
 def main() -> None:
