@@ -222,5 +222,8 @@ src/model_training/__pycache__/
 src/model_evaluation/__pycache__/
 artifacts/models/trained_model.keras
 artifacts/metrics/evaluation_results.json
-artifacts/predictions/
 tests/__pycache__/
+mlruns/
+mlflow.db
+.env
+.bashrc

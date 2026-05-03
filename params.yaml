@@ -3,7 +3,7 @@ train:
   hidden_layer_1_neurons: 64
   hidden_layer_2_neurons: 32
   dropout_rate: 0.3
-  epochs: 100
+  epochs: 20
   batch_size: 32
   random_seed: 42
 

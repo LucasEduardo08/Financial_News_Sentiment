@@ -2,12 +2,15 @@ import logging
 import json
 import os
 
+os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
+
 import joblib
+import mlflow
 import numpy as np
 import pandas as pd
-import keras
 import tensorflow as tf
-from sklearn.metrics import classification_report, confusion_matrix
+from tensorflow import keras
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 from sklearn.preprocessing import LabelEncoder
 
 
@@ -60,6 +63,9 @@ def evaluate_model(model: keras.Model, X_test: np.ndarray, y_test: np.ndarray) -
     y_pred_decoder = np.array([sentiment[i] for i in y_pred])
     y_test = np.array([sentiment[i] for i in np.argmax(y_test, axis=1)])
 
+    accuracy = accuracy_score(y_test, y_pred_decoder)
+    mlflow.log_metric("accuracy", accuracy)
+
     cm = confusion_matrix(y_test, y_pred_decoder, labels=sentiment)
     cm_df = pd.DataFrame(
         cm,
@@ -67,7 +73,9 @@ def evaluate_model(model: keras.Model, X_test: np.ndarray, y_test: np.ndarray) -
         columns=[f"pred_{label}" for label in sentiment],
     )
 
-    return classification_report(y_test, y_pred_decoder), cm_df
+    report_str  = classification_report(y_test, y_pred_decoder)
+
+    return report_str, cm_df
 
 
 def save_evaluation_results(classification_report: str, confusion_matrix: pd.DataFrame) -> None:
@@ -78,12 +86,20 @@ def save_evaluation_results(classification_report: str, confusion_matrix: pd.Dat
         confusion_matrix (pd.DataFrame): The confusion matrix as a DataFrame.
     """
     logger.info("Saving evaluation results...")
+
+    cm_path = "artifacts/metrics/confusion_matrix.csv"
+    confusion_matrix.to_csv(cm_path)
+    
     results = {
         "classification_report": classification_report,
         "confusion_matrix": confusion_matrix.to_dict(),
     }
-    with open("artifacts/metrics/evaluation_results.json", "w") as f:
+    json_path = "artifacts/metrics/evaluation_results.json"
+    with open(json_path, "w") as f:
         json.dump(results, f, indent=4)
+
+    mlflow.log_artifact(cm_path)
+    mlflow.log_artifact(json_path)
 
 
 def main() -> None:
@@ -91,11 +107,30 @@ def main() -> None:
     model = load_model()
     _, _, X_test, y_test, _, _ = load_data()
 
-    # Evaluate model
-    classification_report, confusion_matrix = evaluate_model(model, X_test, y_test)
-    print("Classification Report:\n", classification_report)
-    print("Confusion Matrix:\n", confusion_matrix)
-    save_evaluation_results(classification_report, confusion_matrix)
+    mlflow.set_tracking_uri("sqlite:///mlflow.db")
+
+    # Set up MLflow experiment
+    mlflow.set_experiment("fns_classification")
+
+    experiment = mlflow.get_experiment_by_name("fns_classification")
+
+    # Get run_id for ltest MLflow run
+    runs = mlflow.search_runs(
+        experiment_ids=[experiment.experiment_id],
+        order_by=["start_time DESC"]
+    )
+
+    if runs.empty:
+        raise ValueError("Nenhuma run encontrada no MLflow.")
+
+    run_id = runs.iloc[0].run_id
+
+    with mlflow.start_run(run_id=run_id):
+        # Evaluate model
+        classification_report, confusion_matrix = evaluate_model(model, X_test, y_test)
+        print("Classification Report:\n", classification_report)
+        print("Confusion Matrix:\n", confusion_matrix)
+        save_evaluation_results(classification_report, confusion_matrix)
 
 
 if __name__ == "__main__":

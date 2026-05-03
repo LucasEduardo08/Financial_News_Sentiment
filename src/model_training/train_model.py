@@ -3,7 +3,12 @@ import os
 import yaml
 import numpy as np
 
+os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
+
 import joblib
+import mlflow
+import tensorflow as tf
+from tensorflow import keras
 import pandas as pd
 from keras import Sequential
 from keras.layers import Dense, Dropout
@@ -108,14 +113,32 @@ def main() -> None:
     # Load data
     X_train, y_train, X_test, y_test, X_val, y_val = load_data()
 
-    # Create model
-    model = create_model(input_dim=X_train.shape[1], output_dim=y_train.shape[1])
-    
-    # Train model
-    model = train_model(model, X_train, y_train, X_val, y_val)
+    params = load_params()
 
-    # Save model
-    save_model(model)
+    mlflow.set_tracking_uri("sqlite:///mlflow.db")
+
+    # Set up MLflow experiment (agroup)
+    mlflow.set_experiment("fns_classification")
+
+    # Set up Keras autolog
+    mlflow.keras.autolog() 
+
+    with mlflow.start_run():
+        # Log parameters to MLflow
+        mlflow.log_params(params)
+
+        tf.keras.utils.set_random_seed(params.pop("random_seed"))
+
+        # Create model
+        model = create_model(input_dim=X_train.shape[1], output_dim=y_train.shape[1])
+        
+        # Train model
+        model = train_model(model, X_train, y_train, X_val, y_val)
+
+        # Save model
+        save_model(model)
+
+        mlflow.log_artifact("artifacts/models/trained_model.keras")
 
 
 if __name__ == "__main__":

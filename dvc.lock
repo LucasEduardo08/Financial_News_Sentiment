@@ -114,13 +114,13 @@ stages:
       size: 84457
     - path: src/model_training/train_model.py
       hash: md5
-      md5: 39be87e9f6371e9974f626d87b516edf
-      size: 3432
+      md5: 4955a5863769c9284fd9fc5f2f2836ea
+      size: 4059
     params:
       params.yaml:
         train.batch_size: 32
         train.dropout_rate: 0.3
-        train.epochs: 100
+        train.epochs: 20
         train.hidden_layer_1_neurons: 64
         train.hidden_layer_2_neurons: 32
         train.learning_rate: 0.001
@@ -128,14 +128,14 @@ stages:
     outs:
     - path: artifacts/models/trained_model.keras
       hash: md5
-      md5: aaf35d89a05bf9ef89d5fcbc119d8572
+      md5: d4cf7dab90b359de3b78abaf9c3cf372
       size: 440777
   evaluate:
     cmd: python3 -m src.model_evaluation.evaluate_model
     deps:
     - path: artifacts/models/trained_model.keras
       hash: md5
-      md5: aaf35d89a05bf9ef89d5fcbc119d8572
+      md5: d4cf7dab90b359de3b78abaf9c3cf372
       size: 440777
     - path: data/preprocessed/X_test.joblib
       hash: md5
@@ -163,10 +163,10 @@ stages:
       size: 84457
     - path: src/model_evaluation/evaluate_model.py
       hash: md5
-      md5: c56a0d196b90b824c9a1bfff17f8e7ec
-      size: 3321
+      md5: bbe7f9b1360881e91a2c3a1d5f2d7a91
+      size: 4371
     outs:
     - path: artifacts/metrics/evaluation_results.json
       hash: md5
-      md5: b6e0b66186a24db616102fd51112331c
-      size: 870
+      md5: 798a5f3edbabfaafec0bc500cf3996b9
+      size: 869
