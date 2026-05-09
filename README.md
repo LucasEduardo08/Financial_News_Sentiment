@@ -1,74 +1,80 @@
 # Financial News Sentiment
 
-Project to classify sentiment in financial news and market texts using an NLP pipeline and a neural network model.
+An end-to-end MLOps pipeline to classify sentiment (Positive, Neutral, Negative) in financial news and market texts using Deep Learning.
 
 ## Overview
 
-This repository contains the full pipeline to:
-- download financial sentiment datasets,
-- preprocess and transform text,
-- train a Keras sentiment classification model,
-- evaluate the model and save metrics.
+This project implements a complete machine learning lifecycle:
+- **Data Ingestion**: Automated downloading of financial datasets.
+- **NLP Pipeline**: Text cleaning, TF-IDF vectorization, and SVD dimensionality reduction.
+- **Model Training**: Multi-layer Perceptron (MLP) built with Keras/TensorFlow.
+- **Experiment Tracking**: Full integration with **MLflow** for metrics and artifact logging.
+- **Version Control**: Data and pipeline orchestration using **DVC**.
+- **Deployment**: High-performance API using **FastAPI**.
 
 ## Project Structure
-
-- `data/`
-  - `raw/` — raw dataset CSV files
-  - `preprocessed/` — vectorized and encoded data saved as Joblib files
-- `models/` — trained model saved to `models/trained_model.keras`
-- `metrics/` — evaluation results and metrics
-- `src/` — pipeline source code
-  - `src/data_download` — dataset download scripts
-  - `src/data_preprocessing` — data cleaning, vectorization, and splitting
-  - `src/model_training` — model creation, training, and saving
-  - `src/model_evaluation` — model evaluation and result export
-- `params.yaml` — training and preprocessing parameters
-- `pyproject.toml` — Python dependencies and project metadata
+```text
+.
+├── artifacts/                # Model artifacts and metrics
+│   ├── metrics/              # Confusion matrix and JSON reports
+│   └── models/               # Saved Keras models (.keras)
+├── data/                     # Data storage
+│   ├── preprocessed/         # Vectorized data (Joblib files)
+│   └── raw/                  # Raw CSV datasets
+├── financialnewssentiment/   # Application source code
+│   └── app/                  # FastAPI application (schemas, main)
+├── src/                      # ML pipeline source code
+│   ├── data_download/        # Scripts for data ingestion
+│   ├── data_preprocessing/   # Cleaning and transformation logic
+│   ├── model_evaluation/     # Model performance analysis
+│   └── model_training/       # Training and architecture definitions
+├── params.yaml               # Pipeline hyperparameters
+└── pyproject.toml            # Poetry dependencies and metadata
+```
 
 ## Prerequisites
 
-Install dependencies using Poetry:
+This project uses [Poetry](https://python-poetry.org/) for dependency management.
 
 ```bash
+# Install dependencies
 poetry install
+
+# Activate the virtual environment
 poetry shell
 ```
 
-## How to Run
-
-### 1. Download the datasets
-
+If you are on Windows, use: 
 ```bash
-python3 -m src.data_download.download_data
+poetry env activate
+ ```
+And then copy the results of command on the terminal. On Windows, the command above fails:
+```bash
+poetry shell
 ```
 
-### 2. Preprocess the data
+## How to Run?
+
+### 1. To run pipeline with dvc
 
 ```bash
-python3 -m src.data_preprocessing.preprocess_data
+dvc repro
 ```
 
-This step cleans text, removes stopwords, applies TF-IDF, reduces dimensionality with SVD, and encodes labels.
-
-### 3. Train the model
+### 2. To run the Fastapi aplication
 
 ```bash
-python3 -m src.model_training.train_model
+fastapi dev financialnewssentiment/app/main.py
 ```
 
-This script loads the preprocessed data, creates and trains a Keras model, and saves the trained model to `models/trained_model.keras`.
-
-### 4. Evaluate the model
+### 3. To run the tests using pytest (Optional, this step is to analyse the working of the system)
 
 ```bash
-python3 -m src.model_evaluation.evaluate_model
+pytest --cov=financialnewssentiment/app
 ```
-
-This script loads the trained model and test data, prints the classification report and confusion matrix, and saves results to `metrics/evaluation_results.json`.
 
 
 ## Notes
 
-- The `financialnewssentiment/app/` directory exists but is currently empty.
 - The main focus of this project is the data pipeline and model training/evaluation.
 - Make sure raw data files are present in `data/raw/` before running preprocessing.

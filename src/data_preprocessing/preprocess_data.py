@@ -16,8 +16,7 @@ import scipy
 
 
 logger = logging.getLogger("src.data_loading.load_data")
-PATH_CSV = ["data/raw/train_stockemotions.csv", "data/raw/val_stockemotions.csv", "data/raw/test_stockemotions.csv",
-            "data/raw/train_tfn.csv", "data/raw/val_tfn.csv"]
+PATH_CSV = ["data/raw/train_stockemotions.csv", "data/raw/val_stockemotions.csv", "data/raw/test_stockemotions.csv", "data/raw/train_tfn.csv", "data/raw/val_tfn.csv"]
 
 
 def load_data() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
@@ -92,7 +91,6 @@ def preprocess_data_stockemotions(
     features_clean = features.apply(clean_text)
 
     # Remove stop words
-    nltk.download('stopwords')
     stop_words = stopwords.words('english')
     features_stop_word = features_clean.apply(lambda x: ' '.join([word for word in x.split() if word not in stop_words]))
 
@@ -126,7 +124,6 @@ def preprocess_data_tfn(
     features_clean = features.apply(clean_text)
 
     # Remove stop words
-    nltk.download('stopwords')
     stop_words = stopwords.words('english')
     features_stop_word = features_clean.apply(lambda x: ' '.join([word for word in x.split() if word not in stop_words]))
 
@@ -156,6 +153,7 @@ def tf_idf_vectorization(features: pd.DataFrame) -> scipy.sparse.csr.csr_matrix:
 
     # Apply TF-IDF vectorization
     dataset_tf_idf = vectorizer.fit_transform(features.squeeze().tolist())
+    joblib.dump(vectorizer, "artifacts/models/tfidf_vectorizer.pkl")
 
     return dataset_tf_idf
 
@@ -176,6 +174,7 @@ def svd_reduction(features: scipy.sparse.csr.csr_matrix, n_components: int, rand
 
     svd = TruncatedSVD(n_components=n_components, random_state=random_state)
     dataset_svd = svd.fit_transform(features)
+    joblib.dump(svd, "artifacts/models/svd_model.pkl")
 
     return dataset_svd
 

@@ -45,7 +45,7 @@ def load_data() -> tuple[any]:
     return X_train, y_train, X_test, y_test, X_val, y_val
 
 
-def evaluate_model(model: keras.Model, X_test: np.ndarray, y_test: np.ndarray) -> None:
+def evaluate_model(model: keras.Model, X_test: np.ndarray, y_test: np.ndarray):
     """Evaluate the model on the test set and print the classification report and confusion matrix.
     
     Args:
